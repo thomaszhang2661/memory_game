@@ -1,0 +1,16 @@
+{
+  "HALF_SCREEN_WIDTH": 450,
+  "HALF_SCREEN_HEIGHT": 350,
+  "CARD_AREA_WIDTH_RATIO": 1.2,
+  "CARD_AREA_HEIGHT_RATIO": 1.5,
+  "LEADBOARD_WIDTH_RATIO": 0.45,
+  "STATUS_HEIGHT_RATIO": 0.14,
+  "LEAVE_BLANK_W_RATIO": 0.1,
+  "LEAVE_BLANK_H_RATIO": 0.06,
+  "CARD_WIDTH": 100,
+  "CARD_HEIGHT": 150,
+  "QUIT_IMAGE": "./memory_game_2024/quitbutton.gif",
+  "WARNING_IMAGE": "./memory_game_2024/card_warning.gif",
+  "IMAGE_PATH": "memory_game_2024/cards_front/",
+  "BACK_IMAGE": "./memory_game_2024/card_back.gif"
+}

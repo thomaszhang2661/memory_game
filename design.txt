@@ -1,0 +1,89 @@
+Memory Match Game Design Document
+
+ 1. Game Overview
+Memory Match Game is a classic memory-pairing game where players flip cards to find matching pairs. The game tracks the player’s time, and those who match all pairs in the shortest time are placed on the leaderboard.
+
+ 2. Game Goal
+The goal is to flip pairs of cards and match them. The game ends when all pairs are matched, and the player’s time is recorded. Players with the fastest times are added to the leaderboard.
+
+ 3. Game Rules
+Card Flip: Clicking a card flips it to reveal its front side.
+Matching: If a second card clicked matches the first, both stay flipped; otherwise, they are flipped back.
+Game End: The game ends when all pairs are matched, and the player’s time is recorded.
+Timer: The timer starts when the first card is flipped and stops when all pairs are matched.
+Leaderboard: The leaderboard tracks the top 8 players with the fastest times.
+
+ 4. Main Features
+Timer: Tracks the total time taken to match all pairs.
+Card Flip: Cards flip to reveal their front or back image.
+Matching Check: After flipping two cards, the game checks for a match.
+Leaderboard: Displays the top 8 players with the fastest times.
+Game End: Upon completing all matches, the player’s time is saved to the leaderboard.
+
+ 5. Game Structure
+
+ 5.1 Classes
+MemoryMatchGame: Manages the core game logic, such as card flipping, matching detection, and updating the leaderboard.
+  Methods:
+    `flip_card()`: Flips the selected card.
+    `check_for_match()`: Checks if two flipped cards match.
+    `win_game()`: Ends the game when all pairs are matched.
+    `show_leaderboard()`: Displays the leaderboard.
+
+Card: Represents a single card, including its state (flipped or not) and the associated image.
+  Methods:
+    `flip()`: Flips the card.
+    `draw()`: Draws the card on the screen.
+    `on_click()`: Triggers the `flip_card()` method in the game.
+
+Leaderboard: Handles loading, saving, and updating the leaderboard with player names and their times.
+  Methods:
+    `add_entry()`: Adds a new player’s entry.
+    `get_top_entries()`: Retrieves the top 8 leaderboard entries.
+    `save()`: Saves the leaderboard data to a file.
+
+ 5.2 Functional Modules
+Timer: Uses `time.time()` to track the game’s start and end times.
+Card Management: Uses the `Card` class to manage card states (flipped or not) and images.
+Matching Check: After flipping two cards, the program checks if they match.
+Leaderboard Management: Loads, saves, and updates the leaderboard, maintaining the top 8 players with the fastest times.
+
+ 6. Game Flow
+1. Start Screen: The player enters their name and selects the number of cards (8, 10, or 12).
+2. Game Start: The player clicks a card to begin the game.
+3. Card Flip: The player clicks a card to flip it, and the goal is to match it with another card.
+4. Matching Check: The game checks if two flipped cards match and keeps them flipped if they do.
+5. Game End: The game ends once all pairs are matched, and the player’s time is recorded.
+6. Leaderboard: The leaderboard is updated with the player’s time.
+
+ 7. Data Storage
+Scores: Player names and times are stored in `leader_log.json`.
+Config: Game settings (card images, screen size) are stored in `config.json`.
+
+ 8. User Interface
+Card Area: Displays cards with their backs facing up. Players click cards to flip them and try to match pairs.
+Leaderboard Area: Shows the top 8 players and their times.
+Status Area: Displays the current game status, including the player’s name, number of matched pairs, and remaining time.
+
+ 9. Technical Details
+Programming Language: Python
+Libraries:
+  Turtle: For graphics and interactive user interface.
+  JSON: For saving and loading leaderboard data.
+  Random: For shuffling cards.
+  Time: For tracking game time.
+  Math: For calculating layout (e.g., determining max rows of cards).
+Framework: Object-oriented design, utilizing the `Card`, `MemoryMatchGame`, and `Leaderboard` classes.
+
+ 10. Extensions and Future Improvements
+Increased Difficulty: Add more cards or more complex images to increase the challenge.
+Animations: Add card-flip animations and other visual effects.
+Sound Effects: Implement sound effects for card flips and matching.
+Game Modes: Introduce different game modes (e.g., timed challenges or different grid layouts).
+
+ 11. Conclusion
+Memory Match Game is a fun and challenging memory-pairing game that tests players’ memory and speed. With features like a timer, leaderboard, and interactive card flipping, the game offers a competitive experience. Potential future updates, such as enhanced graphics, difficulty adjustments, and sound effects, can further enrich the gameplay experience.
+
+ 12. References
+ 12.1 https://northeastern.instructure.com/courses/192349/assignments/2493977?module_item_id=11204670
+ 12.2 https://drive.google.com/file/d/1WLoTvoFZWkwTpMONn7GIdeJRmRnCiGX2/view?pli=1

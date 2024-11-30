@@ -23,14 +23,14 @@ CARD_HEIGHT = 150
 
 # 创建一个基础区域类
 class BaseArea:
-    def __init__(self, x, y, width, height, color="black", label=""):
+    def __init__(self, x, y, width, height, color="black", label="",speed=0):
         self.x = x
         self.y = y
         self.width = width
         self.height = height
         self.color = color
         self.drawer = turtle.Turtle()
-        self.drawer.speed(0)
+        self.drawer.speed(speed)
         self.label = label
         self.draw_area()
 
@@ -49,6 +49,7 @@ class BaseArea:
             self.drawer.right(90)
         #self.display_label()
         self.drawer.hideturtle()
+        turtle.update()
 
 
     def display_label(self):
@@ -63,9 +64,9 @@ class CardArea(BaseArea):
         #                  HALF_SCREEN_HEIGHT - LEAVE_BLANK_H,
         #                  CARD_AREA_WIDTH,
         #                  CARD_AREA_HEIGHT, "black", "Card Area")
-    def __init__(self, x, y, width, height, color="black", label="Card Area"):
+    def __init__(self, x, y, width, height, color="black", label="Card Area",speed=0):
 
-        super().__init__(x, y, width, height, color, label)
+        super().__init__(x, y, width, height, color, label,speed)
         self.cards_list = []  # 可以存储卡片对象
         self.draw_cards()
 
@@ -84,14 +85,16 @@ class LeaderboardArea(BaseArea):
     #                      HALF_SCREEN_HEIGHT - LEAVE_BLANK_H,
     #                      LEADBORAD_WIDTH,
     #                      CARD_AREA_HEIGHT, "blue", "Leaderboard",)
-    def __init__(self, x, y, width, height, color="blue", label="Card Leaderboard"):
+    def __init__(self, x, y, width, height, color="blue", label="Card Leaderboard",speed=0):
 
-        super().__init__(x, y, width, height, color, label)
+        super().__init__(x, y, width, height, color, label, speed)
         self.scores = []
 
     def update_leaderboard(self, scores):
         self.scores = scores
         self.drawer.clear()
+        self.drawer.speed(0)
+        self.draw_area()
         #self.draw_area()
         y_offset = -40
         for score in self.scores:
@@ -108,15 +111,17 @@ class StatusArea(BaseArea):
     #                      CARD_AREA_WIDTH,
     #                      STATUS_HEIGHT,
     #                      "black", "Status")
-    def __init__(self, x, y, width, height, color="blue", label="Card Leaderboard"):
+    def __init__(self, x, y, width, height, color="blue", label="Card Leaderboard",speed=0):
 
-        super().__init__(x, y, width, height, color, label)
+        super().__init__(x, y, width, height, color, label,speed)
         self.status = "0 moves, 0 matches"
         self.update_status(self.status)
 
     def update_status(self, status_text):
         self.status = status_text
         self.drawer.clear()
+        self.drawer.speed(0)
+        self.draw_area()
         #self.draw_area()
         self.drawer.penup()
         self.drawer.goto(self.x + 10, self.y - 30)

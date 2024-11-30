@@ -1,5 +1,4 @@
-import random
-from card import Card
+from card import *
 from leaderboard import LeaderBoard
 from area import *
 import json  # 用于读取配置文件
@@ -41,8 +40,9 @@ class MemoryMatchGame:
         self.CARD_GROUPS = self.config.get("CARD_GROUPS", ["config_poker_cards.txt"])
         self.group_ind = 0
         self.card_group = self.CARD_GROUPS[self.group_ind][1]
+        self.speed = int(self.config.get("speed", 10))
         # Set up the screen
-        self.setup_screen()
+        self.setup_game()
 
 
     def odd_warning(self):
@@ -104,7 +104,7 @@ class MemoryMatchGame:
                         self.IMAGE_PATH + image, self.BACK_IMAGE, self)
             self.cards.append(card)
 
-    def setup_screen(self):
+    def setup_game(self):
         screen = turtle.Screen()
         screen.title("Memory Game")
         screen.setup(width=self.HALF_SCREEN_WIDTH * 2, height=self.HALF_SCREEN_HEIGHT * 2)
@@ -125,26 +125,29 @@ class MemoryMatchGame:
         self.card_area = CardArea(- self.HALF_SCREEN_WIDTH + self.LEAVE_BLANK_W,
                              self.HALF_SCREEN_HEIGHT - self.LEAVE_BLANK_H,
                              self.CARD_AREA_WIDTH,
-                             self.CARD_AREA_HEIGHT, "black", "Card Area")
+                             self.CARD_AREA_HEIGHT, "black", "Card Area",self.speed)
 
         self.leaderboard_area = LeaderboardArea(-self.HALF_SCREEN_WIDTH + 2 * self.LEAVE_BLANK_W + self.CARD_AREA_WIDTH,
                                            self.HALF_SCREEN_HEIGHT - self.LEAVE_BLANK_H,
                                            self.LEADBOARD_WIDTH,
-                                           self.CARD_AREA_HEIGHT, "blue", "Leaderboard")
+                                           self.CARD_AREA_HEIGHT, "blue", "Leaderboard",self.speed)
+
+        self.leaderboard = LeaderBoard(self.leaderboard_area,self.num_cards)
 
         self.status_area = StatusArea(-self.HALF_SCREEN_WIDTH + self.LEAVE_BLANK_W,
                                  self.HALF_SCREEN_HEIGHT - 2 * self.LEAVE_BLANK_H - self.CARD_AREA_HEIGHT,
                                  self.CARD_AREA_WIDTH,
                                  self.STATUS_HEIGHT,
-                                 "black", "Status")
+                                 "black", "Status",self.speed)
 
-        self.leaderboard = LeaderBoard(self.leaderboard_area,self.num_cards)
 
-        self.create_quit_button()
 
         screen.tracer(0)  # Disable automatic updates
 
+        self.create_quit_button()
+
         self.place_cards()
+
         screen.update()
         screen.tracer(1)
         screen.mainloop()
@@ -173,7 +176,6 @@ class MemoryMatchGame:
                 self.group_ind = '0'
         self.group_ind = int(self.group_ind)
         self.card_group = self.CARD_GROUPS[self.group_ind][1]
-
 
     def get_num_cards(self):
         """Get num_cards via turtle's text input"""
@@ -210,12 +212,6 @@ class MemoryMatchGame:
             print(f"加载配置文件失败: {e}")
             return {}
 
-    def get_card_by_position(self, row, col):
-        """Find the card at the specified row and column."""
-        for card in self.cards:
-            if card.row == row and card.col == col:
-                return card
-        return None
 
     def flip_card(self, card):
         """Flip the selected card and check for a match."""
@@ -266,15 +262,6 @@ class MemoryMatchGame:
         self.leaderboard.add_entry(self.player_name, self.guess_count)
         self.leaderboard.save()
         self.leaderboard.update()
-        #self.show_leaderboard()
-
-    # def show_leaderboard(self):
-    #     """Display the leaderboard."""
-    #     leaderboard_text = "Leaderboard:\n"
-    #     for entry in self.leaderboard.get_top_entries():
-    #         leaderboard_text += f"{entry['guess']}:{entry['name']} \n"
-    #     turtle.clear()
-    #     turtle.write(leaderboard_text, align="center", font=("Arial", 16, "normal"))
 
 
     def quit_game(self, x=None, y=None):
@@ -319,10 +306,6 @@ class LeaderBoard:
 
         # Keep only the top 8 entries
         self.entries[str(self.num_card)] = self.entries[str(self.num_card)][:8]
-
-    def get_top_entries(self):
-        """Get the top 8 entries."""
-        return self.entries
 
     def save(self):
         """Save the leaderboard to a file."""

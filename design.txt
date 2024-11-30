@@ -1,5 +1,14 @@
 Memory Match Game Design Document
 
+====================================================================
+***included functionality to read card images specified by a configuration file, allowing the program to use different sets of cards. ***
+config file is "config.json" and it is in the same directory as the game file.
+key is "card_group"
+and there are two values already exist that you can choose from:
+"config_poker_cards.txt" , that is self.group_ind=0
+"config_animal_cards.txt", that is self.group_ind=1
+====================================================================
+
  1. Game Overview
 Memory Match Game is a classic memory-pairing game where players flip cards to find matching pairs. The game tracks the player’s time, and those who match all pairs in the shortest time are placed on the leaderboard.
 
@@ -10,11 +19,9 @@ The goal is to flip pairs of cards and match them. The game ends when all pairs 
 Card Flip: Clicking a card flips it to reveal its front side.
 Matching: If a second card clicked matches the first, both stay flipped; otherwise, they are flipped back.
 Game End: The game ends when all pairs are matched, and the player’s time is recorded.
-Timer: The timer starts when the first card is flipped and stops when all pairs are matched.
 Leaderboard: The leaderboard tracks the top 8 players with the fastest times.
 
  4. Main Features
-Timer: Tracks the total time taken to match all pairs.
 Card Flip: Cards flip to reveal their front or back image.
 Matching Check: After flipping two cards, the game checks for a match.
 Leaderboard: Displays the top 8 players with the fastest times.
@@ -43,7 +50,6 @@ Leaderboard: Handles loading, saving, and updating the leaderboard with player n
     `save()`: Saves the leaderboard data to a file.
 
  5.2 Functional Modules
-Timer: Uses `time.time()` to track the game’s start and end times.
 Card Management: Uses the `Card` class to manage card states (flipped or not) and images.
 Matching Check: After flipping two cards, the program checks if they match.
 Leaderboard Management: Loads, saves, and updates the leaderboard, maintaining the top 8 players with the fastest times.
@@ -82,7 +88,7 @@ Sound Effects: Implement sound effects for card flips and matching.
 Game Modes: Introduce different game modes (e.g., timed challenges or different grid layouts).
 
  11. Conclusion
-Memory Match Game is a fun and challenging memory-pairing game that tests players’ memory and speed. With features like a timer, leaderboard, and interactive card flipping, the game offers a competitive experience. Potential future updates, such as enhanced graphics, difficulty adjustments, and sound effects, can further enrich the gameplay experience.
+Memory Match Game is a fun and challenging memory-pairing game that tests players’ memory and speed. With features like leaderboard, and interactive card flipping, the game offers a competitive experience. Potential future updates, such as enhanced graphics, difficulty adjustments, and sound effects, can further enrich the gameplay experience.
 
  12. References
  12.1 https://northeastern.instructure.com/courses/192349/assignments/2493977?module_item_id=11204670

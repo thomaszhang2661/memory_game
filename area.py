@@ -40,7 +40,7 @@ class BaseArea:
         self.drawer.pendown()
         self.drawer.pensize(3)
         self.drawer.pencolor(self.color)
-        self.drawer.write(f"({self.drawer.xcor()}, {self.drawer.ycor()})", font=("Arial", 12, "normal"))
+        #self.drawer.write(f"({self.drawer.xcor()}, {self.drawer.ycor()})", font=("Arial", 12, "normal"))
 
         for _ in range(2):
             self.drawer.forward(self.width)
@@ -91,7 +91,7 @@ class LeaderboardArea(BaseArea):
 
     def update_leaderboard(self, scores):
         self.scores = scores
-        #self.drawer.clear()
+        self.drawer.clear()
         #self.draw_area()
         y_offset = -40
         for score in self.scores:
@@ -112,10 +112,11 @@ class StatusArea(BaseArea):
 
         super().__init__(x, y, width, height, color, label)
         self.status = "0 moves, 0 matches"
+        self.update_status(self.status)
 
     def update_status(self, status_text):
         self.status = status_text
-        #self.drawer.clear()
+        self.drawer.clear()
         #self.draw_area()
         self.drawer.penup()
         self.drawer.goto(self.x + 10, self.y - 30)

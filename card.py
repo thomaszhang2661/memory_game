@@ -18,7 +18,7 @@ class Card(turtle.Turtle):
         self.is_face_up = False  # Initially the card is face-down
         self.front_image = front_image  # Front image of the card
         self.back_image = back_image  # Back image of the card
-
+        self.speed(0)
         # Register images as shapes
         turtle.register_shape(self.front_image)  # Register front image as shape
         turtle.register_shape(self.back_image)  # Register back image as shape
@@ -26,11 +26,11 @@ class Card(turtle.Turtle):
         self.shape(self.back_image)  # Default to showing the back image
         self.penup()  # Do not draw any lines
         self.setposition(self.x, self.y)  # Directly set the position to (x, y)
-        self.onclick(self.flip)  # Bind the click event to flip the card
+        self.onclick(self.on_click)  # Bind the click event to flip the card
         self.game = game
         #self.display_coordinates()
 
-    def flip(self, x, y):
+    def flip(self, x=0, y=0):
         """Flip the card"""
         if self.is_face_up:
             self.shape(self.back_image)  # Show the back side of the card

@@ -20,7 +20,6 @@ class MemoryMatchGame:
         matches (int): The number of matches found by the player.
         player_name (str): The player's name.
         num_cards (int): The number of cards to be used in the game.
-        front_group (int): Group identifier for card images.
         flipped_cards (list): A list of flipped cards.
         game_start_time (float): The time the game started.
         config (dict): Configuration parameters loaded from a JSON file.
@@ -69,7 +68,7 @@ class MemoryMatchGame:
 
         self.player_name = "Anonymous"
         self.num_cards = 8  # default to 8 cards
-        self.front_group = 0  # default to 0, 0 for poker
+
 
         self.game_start_time = None
 
@@ -203,6 +202,9 @@ class MemoryMatchGame:
         else:
             self.cards = []
 
+        if hasattr(self, 'win_turtle'):
+            self.win_turtle.hideturtle()
+
         self.guess_count = 0
         self.matches = 0
         self.flipped_cards = []
@@ -212,8 +214,7 @@ class MemoryMatchGame:
 
         # Ask for number of cards
         self.get_num_cards()
-        if self.num_cards % 2 != 0:
-            self.odd_warning()
+
 
         self.leaderboard.get_num_card(self.num_cards)
 
@@ -235,8 +236,11 @@ class MemoryMatchGame:
     def get_player_name(self):
         """Get player's name via turtle's text input"""
         turtle.clear()
-        self.player_name = turtle.textinput("CS5001 Memory Games",
+        player_name = turtle.textinput("CS5001 Memory Games",
                                             f"your name:\n default: {self.player_name}")
+        if player_name:
+            self.player_name = player_name
+
 
 
     def get_card_group(self):
@@ -249,7 +253,7 @@ class MemoryMatchGame:
         while flag or not self.group_ind.isdigit() or int(self.group_ind) not in range(len(self.CARD_GROUPS)):
             self.group_ind = turtle.textinput("choose card group:",
                                               options +
-                                              "\n defalt: Poker" +
+                                              f"\n defalt: {self.CARD_GROUPS[self.group_ind][0]}" +
                                               "\n edit \"config.json\" for more option" )
             flag = False
             if not self.group_ind:
@@ -264,14 +268,15 @@ class MemoryMatchGame:
         while flag or not num_card.isdigit():
             num_card = turtle.textinput("CS5001 Memory Games",
                                         "#of cards to play:(8,10 or 12)\n" +
-                                        "default: 8")
-
+                                        f"default: {self.num_cards}")
 
             if not num_card:
-                num_card = '8'
+                num_card = str(self.num_cards)
             flag = False
 
         self.num_cards = int(num_card)
+        if self.num_cards % 2 != 0:
+            self.odd_warning()
 
     def create_quit_button(self):
         """Create a quit button using an image."""
@@ -357,9 +362,8 @@ class MemoryMatchGame:
         screen = turtle.Screen()
         screen.register_shape(self.WIN_IMAGE)
         # Create a turtle to display the warning image
-        win_turtle = turtle.Turtle()
-        win_turtle.shape(self.WIN_IMAGE)
-
+        self.win_turtle = turtle.Turtle()
+        self.win_turtle.shape(self.WIN_IMAGE)
         self.leaderboard.add_entry(self.player_name, self.guess_count)
         self.leaderboard.save()
         self.leaderboard.update()
@@ -379,7 +383,7 @@ class LeaderBoard:
         self.area = area
         #self.update()
 
-    def get_num_card(self,num_card):
+    def get_num_card(self, num_card):
         self.num_card = num_card
 
     def load(self):

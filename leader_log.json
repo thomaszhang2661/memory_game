@@ -5,11 +5,19 @@
             "guesses": 5
         },
         {
+            "name": "",
+            "guesses": 5
+        },
+        {
             "name": "charis",
             "guesses": 6
         },
         {
             "name": "Anonymous",
+            "guesses": 7
+        },
+        {
+            "name": "",
             "guesses": 7
         },
         {
@@ -23,14 +31,6 @@
         {
             "name": "Anonymous",
             "guesses": 11
-        },
-        {
-            "name": "Thomas",
-            "guesses": 12
-        },
-        {
-            "name": "Thomas",
-            "guesses": 15
         }
     ],
     "10": [
@@ -53,7 +53,23 @@
             "guesses": 9
         },
         {
+            "name": "Jian",
+            "guesses": 9
+        },
+        {
+            "name": "",
+            "guesses": 9
+        },
+        {
             "name": "Charis Zhang",
+            "guesses": 10
+        },
+        {
+            "name": "Charis",
+            "guesses": 10
+        },
+        {
+            "name": "Jian",
             "guesses": 10
         },
         {
@@ -63,18 +79,6 @@
         {
             "name": "Charis Zhang",
             "guesses": 12
-        },
-        {
-            "name": " \u5f20\u8d77\u521d",
-            "guesses": 13
-        },
-        {
-            "name": "Charis Zhang",
-            "guesses": 15
-        },
-        {
-            "name": "Charis Zhang",
-            "guesses": 19
         }
     ]
 }

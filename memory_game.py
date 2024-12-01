@@ -138,8 +138,7 @@ class MemoryMatchGame:
     def place_cards(self):
         """Place the cards on the screen."""
         # Create the cards
-        for card in self.cards:
-            card.hideturtle()
+
         card_images = self.load_card_images()
         num_image = len(card_images)
         random.shuffle(card_images)
@@ -177,7 +176,7 @@ class MemoryMatchGame:
                                            self.LEADBOARD_WIDTH,
                                            self.CARD_AREA_HEIGHT, "blue", "Leaderboard", self.speed)
 
-        self.leaderboard = LeaderBoard(self.leaderboard_area, self.num_cards)
+        self.leaderboard = LeaderBoard(self.leaderboard_area)
 
         self.status_area = StatusArea(-self.HALF_SCREEN_WIDTH + self.LEAVE_BLANK_W,
                                  self.HALF_SCREEN_HEIGHT - 2 * self.LEAVE_BLANK_H - self.CARD_AREA_HEIGHT,
@@ -197,7 +196,13 @@ class MemoryMatchGame:
     def start_new_game(self,x=None, y=None):
 
         # init the game parameters
-        self.cards = []
+        if hasattr(self, 'cards'):
+            for card in self.cards:
+                card.hideturtle()
+            self.cards.clear()
+        else:
+            self.cards = []
+
         self.guess_count = 0
         self.matches = 0
         self.flipped_cards = []
@@ -209,6 +214,13 @@ class MemoryMatchGame:
         self.get_num_cards()
         if self.num_cards % 2 != 0:
             self.odd_warning()
+
+        self.leaderboard.get_num_card(self.num_cards)
+
+        # update the leaderboard according to number of cards
+        self.leaderboard.update()
+
+
         # Ask for card group
         self.get_card_group()
 
@@ -360,14 +372,15 @@ class MemoryMatchGame:
 
 
 class LeaderBoard:
-    def __init__(self, area, num_card=8,filepath="leader_log.json"):
+    def __init__(self, area,filepath="leader_log.json"):
         self.entries = []
         self.filepath = filepath
         self.load()
-        self.num_card = num_card
         self.area = area
-        self.update()
+        #self.update()
 
+    def get_num_card(self,num_card):
+        self.num_card = num_card
 
     def load(self):
         """Load leaderboard entries from a file."""

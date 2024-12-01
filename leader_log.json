@@ -1,6 +1,14 @@
 {
     "8": [
         {
+            "name": "Charis Zhang",
+            "guesses": 5
+        },
+        {
+            "name": "charis",
+            "guesses": 6
+        },
+        {
             "name": "Anonymous",
             "guesses": 7
         },
@@ -13,6 +21,10 @@
             "guesses": 10
         },
         {
+            "name": "Anonymous",
+            "guesses": 11
+        },
+        {
             "name": "Thomas",
             "guesses": 12
         },
@@ -22,6 +34,10 @@
         }
     ],
     "10": [
+        {
+            "name": "Charis Zhang",
+            "guesses": 6
+        },
         {
             "name": "Thomas",
             "guesses": 10
@@ -37,8 +53,28 @@
             "guesses": 9
         },
         {
+            "name": "Charis Zhang",
+            "guesses": 10
+        },
+        {
             "name": "Thomas",
             "guesses": 12
+        },
+        {
+            "name": "Charis Zhang",
+            "guesses": 12
+        },
+        {
+            "name": " \u5f20\u8d77\u521d",
+            "guesses": 13
+        },
+        {
+            "name": "Charis Zhang",
+            "guesses": 15
+        },
+        {
+            "name": "Charis Zhang",
+            "guesses": 19
         }
     ]
 }

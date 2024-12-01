@@ -1,0 +1,6 @@
+cat1.gif
+cat2.gif
+cat3.gif
+cat4.gif
+cat5.gif
+cat6.gif

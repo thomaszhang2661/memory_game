@@ -1,21 +1,76 @@
+'''"""
+CS5001 - Memory Game
+Project by Jian Zhang
+'''
+
 from card import *
 from leaderboard import LeaderBoard
 from area import *
-import json  # 用于读取配置文件
+import json
 import math
 
 
-# Memory Match Game class
 class MemoryMatchGame:
-    def __init__(self):
-        self.cards = []
-        self.guess_count = 0
-        self.matches = 0
-        self.player_name = "Anonymous"
-        self.num_cards = 8  # 默认值，稍后从用户获取
-        self.front_group = 0  # 默认值
+    """
+    Memory Match Game class that handles the logic of the memory card game.
 
-        self.flipped_cards = []
+    Attributes:
+        cards (list): A list of Card objects used in the game.
+        guess_count (int): The number of guesses made by the player.
+        matches (int): The number of matches found by the player.
+        player_name (str): The player's name.
+        num_cards (int): The number of cards to be used in the game.
+        front_group (int): Group identifier for card images.
+        flipped_cards (list): A list of flipped cards.
+        game_start_time (float): The time the game started.
+        config (dict): Configuration parameters loaded from a JSON file.
+        HALF_SCREEN_WIDTH (int): Half of the screen width for positioning elements.
+        HALF_SCREEN_HEIGHT (int): Half of the screen height for positioning elements.
+        CARD_AREA_WIDTH (int): Width of the card area on the screen.
+        CARD_AREA_HEIGHT (int): Height of the card area on the screen.
+        LEADBOARD_WIDTH (int): Width of the leaderboard area.
+        STATUS_HEIGHT (int): Height of the status area.
+        LEAVE_BLANK_W (int): Horizontal padding between elements.
+        LEAVE_BLANK_H (int): Vertical padding between elements.
+        CARD_WIDTH (int): Width of each card.
+        CARD_HEIGHT (int): Height of each card.
+        QUIT_IMAGE (str): Path to the quit button image.
+        WARNING_IMAGE (str): Path to the warning image.
+        IMAGE_PATH (str): Path to the directory containing card images.
+        BACK_IMAGE (str): Path to the back image for cards.
+        WIN_IMAGE (str): Path to the win image.
+        NEW_GAME_IMAGE (str): Path to the new game image.
+        CARD_GROUPS (list): List of available card groups.
+        group_ind (int): Index for selecting the card group.
+        card_group (str): Path to the selected card group.
+        speed (int): Speed of the game animations.
+
+    Methods:
+        __init__(): Initializes the game with default settings and loads configuration.
+        odd_warning(): Displays a warning and adjusts the number of cards if it's invalid.
+        load_card_images(): Loads the images for the cards based on the selected group.
+        place_cards(): Places the cards randomly on the screen.
+        setup_game(): Sets up the game environment, including screen and areas.
+        start_new_game(): Starts a new game by resetting necessary parameters.
+        get_player_name(): Prompts the user to input their name.
+        get_card_group(): Prompts the user to select a card group.
+        get_num_cards(): Prompts the user to choose the number of cards for the game.
+        create_quit_button(): Creates a quit button on the screen.
+        create_new_game_button(): Creates a new game button on the screen.
+        load_config(filepath): Loads configuration from a JSON file.
+        flip_card(card): Flips a selected card and checks for a match.
+        check_for_match(): Checks if the two flipped cards match.
+        flip_back(): Flips the cards back to their face-down state if they don't match.
+        win_game(): Ends the game when all matches are found and updates the leaderboard.
+        quit_game(x, y): Quits the game when the quit button is clicked.
+    """
+    def __init__(self):
+        """Initialize the MemoryMatchGame class."""
+
+        self.player_name = "Anonymous"
+        self.num_cards = 8  # default to 8 cards
+        self.front_group = 0  # default to 0, 0 for poker
+
         self.game_start_time = None
 
         # Load the config from the file
@@ -37,11 +92,14 @@ class MemoryMatchGame:
         self.IMAGE_PATH = self.config.get("IMAGE_PATH", "images/")
         self.BACK_IMAGE = self.config.get("BACK_IMAGE", "memory_game_2024/card_back.gif")
         self.WIN_IMAGE = self.config.get("WIN_IMAGE", "memory_game_2024/winer.gif")
+        self.NEW_GAME_IMAGE = self.config.get("NEW_GAME_IMAGE", "memory_game_2024/new_game.gif")
         self.CARD_GROUPS = self.config.get("CARD_GROUPS", ["config_poker_cards.txt"])
         self.group_ind = 0
         self.card_group = self.CARD_GROUPS[self.group_ind][1]
         self.speed = int(self.config.get("speed", 10))
-        # Set up the screen
+        self.player_name = "Anonymous"
+        self.num_cards = 8  # Default to 8 cards
+        # Set up the game
         self.setup_game()
 
 
@@ -58,11 +116,7 @@ class MemoryMatchGame:
         warning_turtle.penup()
         warning_turtle.goto(0, 0)
 
-
-
         # Wait for a short time to let the user see the warning
-        # Use `turtle.textinput` to wait for user acknowledgment
-        # Use `turtle.textinput` to wait for user acknowledgment
         turtle.ontimer(lambda: warning_turtle.hideturtle(), 2000)  # Hide after 2 seconds
 
         # Adjust the number of cards to the nearest valid value
@@ -84,6 +138,8 @@ class MemoryMatchGame:
     def place_cards(self):
         """Place the cards on the screen."""
         # Create the cards
+        for card in self.cards:
+            card.hideturtle()
         card_images = self.load_card_images()
         num_image = len(card_images)
         random.shuffle(card_images)
@@ -104,11 +160,47 @@ class MemoryMatchGame:
                         self.IMAGE_PATH + image, self.BACK_IMAGE, self)
             self.cards.append(card)
 
-    def setup_game(self):
-        screen = turtle.Screen()
-        screen.title("Memory Game")
-        screen.setup(width=self.HALF_SCREEN_WIDTH * 2, height=self.HALF_SCREEN_HEIGHT * 2)
-        screen.bgcolor("white")
+    def setup_game(self, x=None, y=None):
+        self.screen = turtle.Screen()
+        self.screen.title("Memory Game")
+        self.screen.setup(width=self.HALF_SCREEN_WIDTH * 2, height=self.HALF_SCREEN_HEIGHT * 2)
+        self.screen.bgcolor("white")
+
+        # creat each area
+        self.card_area = CardArea(- self.HALF_SCREEN_WIDTH + self.LEAVE_BLANK_W,
+                             self.HALF_SCREEN_HEIGHT - self.LEAVE_BLANK_H,
+                             self.CARD_AREA_WIDTH,
+                             self.CARD_AREA_HEIGHT, "black", "Card Area", self.speed)
+
+        self.leaderboard_area = LeaderboardArea(-self.HALF_SCREEN_WIDTH + 2 * self.LEAVE_BLANK_W + self.CARD_AREA_WIDTH,
+                                           self.HALF_SCREEN_HEIGHT - self.LEAVE_BLANK_H,
+                                           self.LEADBOARD_WIDTH,
+                                           self.CARD_AREA_HEIGHT, "blue", "Leaderboard", self.speed)
+
+        self.leaderboard = LeaderBoard(self.leaderboard_area, self.num_cards)
+
+        self.status_area = StatusArea(-self.HALF_SCREEN_WIDTH + self.LEAVE_BLANK_W,
+                                 self.HALF_SCREEN_HEIGHT - 2 * self.LEAVE_BLANK_H - self.CARD_AREA_HEIGHT,
+                                 self.CARD_AREA_WIDTH,
+                                 self.STATUS_HEIGHT,
+                                 "black", "Status", self.speed)
+
+        # Disable automatic updates
+        self.screen.tracer(0)
+        self.create_quit_button()
+        self.create_new_game_button()
+        self.screen.update()
+        self.screen.tracer(1)
+        self.start_new_game()
+        self.screen.mainloop()
+
+    def start_new_game(self,x=None, y=None):
+
+        # init the game parameters
+        self.cards = []
+        self.guess_count = 0
+        self.matches = 0
+        self.flipped_cards = []
 
         # Ask for player's name
         self.get_player_name()
@@ -120,44 +212,20 @@ class MemoryMatchGame:
         # Ask for card group
         self.get_card_group()
 
-
-        # 创建各区域对象
-        self.card_area = CardArea(- self.HALF_SCREEN_WIDTH + self.LEAVE_BLANK_W,
-                             self.HALF_SCREEN_HEIGHT - self.LEAVE_BLANK_H,
-                             self.CARD_AREA_WIDTH,
-                             self.CARD_AREA_HEIGHT, "black", "Card Area",self.speed)
-
-        self.leaderboard_area = LeaderboardArea(-self.HALF_SCREEN_WIDTH + 2 * self.LEAVE_BLANK_W + self.CARD_AREA_WIDTH,
-                                           self.HALF_SCREEN_HEIGHT - self.LEAVE_BLANK_H,
-                                           self.LEADBOARD_WIDTH,
-                                           self.CARD_AREA_HEIGHT, "blue", "Leaderboard",self.speed)
-
-        self.leaderboard = LeaderBoard(self.leaderboard_area,self.num_cards)
-
-        self.status_area = StatusArea(-self.HALF_SCREEN_WIDTH + self.LEAVE_BLANK_W,
-                                 self.HALF_SCREEN_HEIGHT - 2 * self.LEAVE_BLANK_H - self.CARD_AREA_HEIGHT,
-                                 self.CARD_AREA_WIDTH,
-                                 self.STATUS_HEIGHT,
-                                 "black", "Status",self.speed)
-
-
-
-        screen.tracer(0)  # Disable automatic updates
-
-        self.create_quit_button()
-
+        self.screen.tracer(0)
+        # Disable automatic updates
         self.place_cards()
-
-        screen.update()
-        screen.tracer(1)
-        screen.mainloop()
+        self.status_area.update_status(f"{self.guess_count} moves, {self.matches} matches")
+        self.screen.update()
+        self.screen.tracer(1)
+        self.screen.mainloop()
 
     def get_player_name(self):
         """Get player's name via turtle's text input"""
         turtle.clear()
-        self.player_name = turtle.textinput("CS5001 Memory Games", "your name:")
-        if not self.player_name:
-            self.player_name = "Anonymous"
+        self.player_name = turtle.textinput("CS5001 Memory Games",
+                                            f"your name:\n default: {self.player_name}")
+
 
     def get_card_group(self):
         """Get player's name via turtle's text input"""
@@ -169,7 +237,7 @@ class MemoryMatchGame:
         while flag or not self.group_ind.isdigit() or int(self.group_ind) not in range(len(self.CARD_GROUPS)):
             self.group_ind = turtle.textinput("choose card group:",
                                               options +
-                                              "\n defalt:0" +
+                                              "\n defalt: Poker" +
                                               "\n edit \"config.json\" for more option" )
             flag = False
             if not self.group_ind:
@@ -180,50 +248,72 @@ class MemoryMatchGame:
     def get_num_cards(self):
         """Get num_cards via turtle's text input"""
         turtle.clear()
-        self.num_cards = turtle.textinput("CS5001 Memory Games", "#of cards to play:(8,10 or 12)")
+        flag = True
+        while flag or not num_card.isdigit():
+            num_card = turtle.textinput("CS5001 Memory Games",
+                                        "#of cards to play:(8,10 or 12)\n" +
+                                        "default: 8")
 
-        if not self.num_cards:
-            self.num_cards = 8
-        self.num_cards = int(self.num_cards)
+
+            if not num_card:
+                num_card = '8'
+            flag = False
+
+        self.num_cards = int(num_card)
 
     def create_quit_button(self):
         """Create a quit button using an image."""
         screen = turtle.Screen()
-
         # Register the custom quit button image
         screen.register_shape(self.QUIT_IMAGE)
 
         # Create the quit button turtle
         self.quit_button = turtle.Turtle()
+        self.quit_button.speed(0)
         self.quit_button.shape(self.QUIT_IMAGE)
         self.quit_button.penup()
-        self.quit_button.goto(-self.HALF_SCREEN_WIDTH + 2 * self.LEAVE_BLANK_W + self.CARD_AREA_WIDTH + 30,
+        self.quit_button.goto(-self.HALF_SCREEN_WIDTH + 3 * self.LEAVE_BLANK_W + self.CARD_AREA_WIDTH + 100,
                               self.HALF_SCREEN_HEIGHT - 2 * self.LEAVE_BLANK_H - self.CARD_AREA_HEIGHT - 20)  #
         # Adjust position as needed
         self.quit_button.onclick(self.quit_game)
 
+    def create_new_game_button(self):
+        """Create a new game button using an image."""
+        screen = turtle.Screen()
+
+        # Register the custom new game button image
+        screen.register_shape(self.NEW_GAME_IMAGE)
+
+        # Create the quit button turtle
+        self.new_game = turtle.Turtle()
+        self.new_game.speed(0)
+        self.new_game.shape(self.NEW_GAME_IMAGE)
+        self.new_game.penup()
+        self.new_game.goto(-self.HALF_SCREEN_WIDTH + 2 * self.LEAVE_BLANK_W + self.CARD_AREA_WIDTH + 50,
+                              self.HALF_SCREEN_HEIGHT - 2 * self.LEAVE_BLANK_H - self.CARD_AREA_HEIGHT - 20)  #
+        # Adjust position as needed
+        self.new_game.onclick(self.start_new_game)
+
     def load_config(self, filepath):
-        """从 JSON 文件加载配置"""
+        """load configuration from a json file."""
         try:
             with open(filepath, 'r') as f:
                 config = json.load(f)
             return config
         except Exception as e:
-            print(f"加载配置文件失败: {e}")
+            print(f"failed to load config file: {e}")
             return {}
 
 
     def flip_card(self, card):
         """Flip the selected card and check for a match."""
-        # if not self.game_start_time:
-        #     self.game_start_time = time.time()  # Start the timer when the first card is clicked
         if card not in self.flipped_cards and card.is_face_up == False and len(self.flipped_cards) < 2:
             card.flip()
             self.flipped_cards.append(card)
             if len(self.flipped_cards) == 2:
                 self.guess_count += 1
-                self.check_for_match()
                 self.status_area.update_status(f"{self.guess_count} moves, {self.matches} matches")
+                self.check_for_match()
 
     def check_for_match(self):
         """Check if the two flipped cards match."""
@@ -252,7 +342,6 @@ class MemoryMatchGame:
 
     def win_game(self):
         """End the game when all matches are found and update the leaderboard."""
-        # total_time = round(time.time() - self.game_start_time,2)
         screen = turtle.Screen()
         screen.register_shape(self.WIN_IMAGE)
         # Create a turtle to display the warning image

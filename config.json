@@ -14,7 +14,8 @@
   "IMAGE_PATH": "memory_game_2024/cards_front/",
   "BACK_IMAGE": "./memory_game_2024/card_back.gif",
   "WIN_IMAGE": "./memory_game_2024/winner.gif",
-  "CARD_GROUPS": [["Poker","config_poker_cards.txt"],["Dogs","config_dog_cards.txt"]],
+  "NEW_GAME_IMAGE": "./memory_game_2024/new_game.gif",
+  "CARD_GROUPS": [["Poker","config_poker_cards.txt"],["Dogs","config_dog_cards.txt"],["Cats","config_cat_cards.txt"]],
   "card_group": "config_poker_cards.txt",
   "speed": 10
 }

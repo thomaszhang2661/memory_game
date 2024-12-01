@@ -1,95 +1,126 @@
 Memory Match Game Design Document
 
+
 ====================================================================
 ***included functionality to read card images specified by a configuration file, allowing the program to use different sets of cards. ***
 config file is "config.json" and it is in the same directory as the game file.
 key is "card_group"
 and there are two values already exist that you can choose from:
 "config_poker_cards.txt" , that is self.group_ind=0
-"config_animal_cards.txt", that is self.group_ind=1
+"config_dog_cards.txt", that is self.group_ind=1
+"config_cat_cards.txt", that is self.group_ind=1
 ====================================================================
 
- 1. Game Overview
-Memory Match Game is a classic memory-pairing game where players flip cards to find matching pairs. The game tracks the player’s time, and those who match all pairs in the shortest time are placed on the leaderboard.
+Memory Match Game - Design Document
+Project Overview
+The Memory Match Game is a card-matching game implemented in Python using the turtle graphics library. The player flips over cards to match pairs, aiming to find all matching pairs with the fewest guesses possible. The game tracks the leaderboard and displays a win screen once all pairs are matched. The game also provides various customizable options, including card themes, card count, and speed settings.
 
- 2. Game Goal
-The goal is to flip pairs of cards and match them. The game ends when all pairs are matched, and the player’s time is recorded. Players with the fastest times are added to the leaderboard.
+1. Game Architecture
+1.1 Core Class: MemoryMatchGame
+MemoryMatchGame:
+The primary class responsible for managing the game's main logic, including initialization, starting a new game, matching cards, handling game win conditions, and user interaction via the graphical interface.
+It uses the turtle graphics library to create the game window and handle user input.
+It loads configuration settings from a config.json file to allow customization (e.g., screen size, card theme, number of cards).
+1.2 Key Components
+Card:
 
- 3. Game Rules
-Card Flip: Clicking a card flips it to reveal its front side.
-Matching: If a second card clicked matches the first, both stay flipped; otherwise, they are flipped back.
-Game End: The game ends when all pairs are matched, and the player’s time is recorded.
-Leaderboard: The leaderboard tracks the top 8 players with the fastest times.
+Represents a single card in the game, which includes the front image, back image, and the current state (face-up or face-down).
+The Card class provides methods to flip the card and update its graphical representation.
+Each card has a position on the screen and responds to user clicks for flipping.
+LeaderBoard:
 
- 4. Main Features
-Card Flip: Cards flip to reveal their front or back image.
-Matching Check: After flipping two cards, the game checks for a match.
-Leaderboard: Displays the top 8 players with the fastest times.
-Game End: Upon completing all matches, the player’s time is saved to the leaderboard.
+Manages the leaderboard by storing player names and their guess counts.
+It allows for saving and loading of leaderboard entries to and from a file (JSON format).
+After each game, the leaderboard is updated based on the player's performance (fewer guesses = better score).
+CardArea, LeaderboardArea, and StatusArea:
 
- 5. Game Structure
+These components are responsible for displaying the different areas of the game:
+CardArea: The main area where the cards are displayed.
+LeaderboardArea: The area showing the top player scores.
+StatusArea: Displays game status, such as the number of moves made and the number of matches found.
+Each area updates dynamically based on game events (e.g., the status bar shows current moves and matches).
+2. Game Flow
+2.1 Starting the Game
+Player Name: The game prompts the player to enter a name at the beginning.
+Card Count Selection: The player chooses how many cards to play with: 8, 10, or 12 cards.
+Card Group Selection: The player can choose a card group (e.g., poker cards). The card images are loaded from a specified directory, and this choice can be customized in the configuration file (config.json).
+2.2 Game Play
+The game starts with all cards face down.
+The player clicks on two cards at a time to flip them over and check if they match.
+If a match is found, the cards are hidden. If no match is found, the cards are flipped back after a short delay.
+The game tracks the number of moves made and the number of matched pairs found.
+2.3 Winning the Game
+The game ends when all pairs have been matched.
+A win screen is displayed, and the player's name and number of moves are recorded in the leaderboard.
+2.4 Game Controls
+Quit Button: A graphical button allows the player to quit the game.
+New Game Button: Another button allows the player to start a new game.
+3. Configuration
+3.1 config.json
+The game’s behavior and appearance can be customized through a config.json file. Here, the following settings can be adjusted:
 
- 5.1 Classes
-MemoryMatchGame: Manages the core game logic, such as card flipping, matching detection, and updating the leaderboard.
-  Methods:
-    `flip_card()`: Flips the selected card.
-    `check_for_match()`: Checks if two flipped cards match.
-    `win_game()`: Ends the game when all pairs are matched.
-    `show_leaderboard()`: Displays the leaderboard.
+Screen Dimensions: Customize the width and height of the game screen.
+Card Dimensions: Set the width and height of individual cards.
+Card Themes: Define different card groups (e.g., poker cards, custom images).
+Speed: Adjust the speed of the game animations.
+Example config.json:
+json
 
-Card: Represents a single card, including its state (flipped or not) and the associated image.
-  Methods:
-    `flip()`: Flips the card.
-    `draw()`: Draws the card on the screen.
-    `on_click()`: Triggers the `flip_card()` method in the game.
+{
+    "HALF_SCREEN_WIDTH": 400,
+    "HALF_SCREEN_HEIGHT": 400,
+    "CARD_AREA_WIDTH_RATIO": 0.6,
+    "CARD_AREA_HEIGHT_RATIO": 0.6,
+    "LEADBOARD_WIDTH_RATIO": 0.3,
+    "STATUS_HEIGHT_RATIO": 0.2,
+    "LEAVE_BLANK_W_RATIO": 0.05,
+    "LEAVE_BLANK_H_RATIO": 0.05,
+    "CARD_WIDTH": 100,
+    "CARD_HEIGHT": 150,
+    "QUIT_IMAGE": "memory_game_2024/quitbutton.gif",
+    "WARNING_IMAGE": "memory_game_2024/card_warning.gif",
+    "IMAGE_PATH": "images/",
+    "BACK_IMAGE": "memory_game_2024/card_back.gif",
+    "WIN_IMAGE": "memory_game_2024/winer.gif",
+    "NEW_GAME_IMAGE": "memory_game_2024/new_game.gif",
+    "CARD_GROUPS": ["config_poker_cards.txt"],
+    "speed": 10
+}
+4. Game Logic
+4.1 Flipping Cards
+When the player clicks on a card, the card is flipped over (if it is not already face-up and if fewer than two cards are currently flipped).
+If two cards are flipped, the game checks if they match by comparing their front images.
+If they match, the cards are hidden and removed from the screen. If they don't match, they are flipped back over after a short delay.
+4.2 Matching and Score Keeping
+The game tracks the number of guesses the player makes (guess_count).
+For each pair of matching cards, the game updates the number of matches found (matches).
+When all pairs are matched, the player wins the game, and their score is recorded in the leaderboard.
+5. Leaderboard
+Leaderboard keeps track of top scores for each configuration of the game (based on the number of cards used).
+Scores are sorted by the fewest guesses (lower guesses are better).
+The leaderboard is saved to a leader_log.json file after each game.
+6. User Interface
+The game uses the turtle library to create a simple graphical interface:
 
-Leaderboard: Handles loading, saving, and updating the leaderboard with player names and their times.
-  Methods:
-    `add_entry()`: Adds a new player’s entry.
-    `get_top_entries()`: Retrieves the top 8 leaderboard entries.
-    `save()`: Saves the leaderboard data to a file.
+Card Area: Displays the cards laid out in rows and columns.
+Leaderboard Area: Shows the top scores.
+Status Area: Displays current game status, including the number of moves and matches.
 
- 5.2 Functional Modules
-Card Management: Uses the `Card` class to manage card states (flipped or not) and images.
-Matching Check: After flipping two cards, the program checks if they match.
-Leaderboard Management: Loads, saves, and updates the leaderboard, maintaining the top 8 players with the fastest times.
+7. How to Run the Game
+Clone the repository:
+bash
+https://github.com/thomaszhang2661/memory_game.git
 
- 6. Game Flow
-1. Start Screen: The player enters their name and selects the number of cards (8, 10, or 12).
-2. Game Start: The player clicks a card to begin the game.
-3. Card Flip: The player clicks a card to flip it, and the goal is to match it with another card.
-4. Matching Check: The game checks if two flipped cards match and keeps them flipped if they do.
-5. Game End: The game ends once all pairs are matched, and the player’s time is recorded.
-6. Leaderboard: The leaderboard is updated with the player’s time.
+Navigate to the project directory:
+bash
 
- 7. Data Storage
-Scores: Player names and times are stored in `leader_log.json`.
-Config: Game settings (card images, screen size) are stored in `config.json`.
+cd memory-match-game
+Run the Python script to start the game:
+bash
+python memory_match_game.py
+8. License
+This project is licensed under the MIT License - see the LICENSE file for details. 12. References
 
- 8. User Interface
-Card Area: Displays cards with their backs facing up. Players click cards to flip them and try to match pairs.
-Leaderboard Area: Shows the top 8 players and their times.
-Status Area: Displays the current game status, including the player’s name, number of matched pairs, and remaining time.
-
- 9. Technical Details
-Programming Language: Python
-Libraries:
-  Turtle: For graphics and interactive user interface.
-  JSON: For saving and loading leaderboard data.
-  Random: For shuffling cards.
-  Time: For tracking game time.
-  Math: For calculating layout (e.g., determining max rows of cards).
-Framework: Object-oriented design, utilizing the `Card`, `MemoryMatchGame`, and `Leaderboard` classes.
-
- 10. Extensions and Future Improvements
-Increased Difficulty: Add more cards or more complex images to increase the challenge.
-Animations: Add card-flip animations and other visual effects.
-Sound Effects: Implement sound effects for card flips and matching.
-Game Modes: Introduce different game modes (e.g., timed challenges or different grid layouts).
-
- 11. Conclusion
-Memory Match Game is a fun and challenging memory-pairing game that tests players’ memory and speed. With features like leaderboard, and interactive card flipping, the game offers a competitive experience. Potential future updates, such as enhanced graphics, difficulty adjustments, and sound effects, can further enrich the gameplay experience.
-
- 12. References
- 12.1 https://northeastern.instructure.com/courses/192349/assignments/2493977?module_item_id=11204670
- 12.2 https://drive.google.com/file/d/1WLoTvoFZWkwTpMONn7GIdeJRmRnCiGX2/view?pli=1
+Reference
+https://northeastern.instructure.com/courses/192349/assignments/2493977?module_item_id=11204670
+https://drive.google.com/file/d/1WLoTvoFZWkwTpMONn7GIdeJRmRnCiGX2/view?pli=1

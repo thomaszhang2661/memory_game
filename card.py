@@ -1,15 +1,46 @@
 """
-cs5001
-project memory_game
-Jian Zhang
+CS5001 - Memory Game
+Project by Jian Zhang
+
+This script serves as a base class used for a simple memory matching game
+using the `turtle` module. The game consists of cards that can be flipped when clicked, showing either the front or back image.
+This `Card` class handles the creation, flipping, and interaction with the cards.
+
+Classes:
+    Card: Represents a card in the memory game with methods for flipping, drawing, and handling
+          user clicks.
+
+Functions:
+    test_cards: A test function to create multiple card objects and place them in the turtle screen
+                for demonstration. It registers the necessary images, creates four cards, and keeps
+                the window open for interaction.
 """
+
 import turtle
 
-# Constant settings
-CARD_SIZE = (100, 150)  # Card size (width, height)
-GRID_GAP = 10  # Gap between cards
 
 class Card(turtle.Turtle):
+    """
+    A class representing a card in the memory matching game.
+
+    Inherits from turtle.Turtle and represents a card that can be flipped to show either its front
+    or back image when clicked. The card's state is tracked by whether it is face up or face down.
+
+    Attributes:
+        x (int): The x-coordinate for the card's position.
+        y (int): The y-coordinate for the card's position.
+        is_face_up (bool): A boolean indicating whether the card is face-up (True) or face-down (False).
+        front_image (str): The file path for the front image of the card (GIF format).
+        back_image (str): The file path for the back image of the card (GIF format).
+        game (object): A reference to the game object that manages the game state (optional).
+
+    Methods:
+        flip: Flips the card between face-up and face-down, showing the respective image.
+        display_coordinates: Displays the card's coordinates on the screen (for debugging purposes).
+        on_click: A handler for mouse clicks that triggers the card flip via the game's flip_card method.
+        draw: redraws the card, either with its front or back image based on its state.
+    """
+
     def __init__(self, x, y, front_image, back_image, game=None):
         super().__init__()
         # self.value = value  # The value of the card
@@ -46,12 +77,14 @@ class Card(turtle.Turtle):
         self.write(f"({self.x}, {self.y})", align="center", font=("Arial", 10, "normal"))
 
     def on_click(self, x, y):
-        """处理点击事件"""
-        self.game.flip_card(self)  # 调用 MemoryMatchGame 中的 flip_card 方法
+        """Handle the event of clicking on the card."""
+        # MemoryMatchGame flip_card method
+        self.game.flip_card(self)
 
     def draw(self):
         """Redraw the card after flipping."""
         self.shape(self.front_image if self.is_face_up else self.back_image)
+
 
 def test_cards():
     screen = turtle.Screen()
@@ -69,6 +102,7 @@ def test_cards():
 
     # Keep the window open and continue listening for events
     turtle.mainloop()  # This keeps the window open and listens for click events
+
 
 if __name__ == "__main__":
     test_cards()
